@@ -80,8 +80,8 @@ class SpectralResidual:
                     self.svd_entropies.append(
                         ant.svd_entropy(self.__anomaly_frame[start:start + self.anomaly_window]['value'].tolist(),
                                         normalize=True))
-                except:
-                    pass
+                except Exception as e:
+                    print(str(e))
         self.mean_entropy = np.mean([v for v in self.svd_entropies if pd.notna(v)])
         self.boundary_bottom = self.mean_entropy - \
                                self.entropy_factor * \
@@ -185,10 +185,7 @@ class SpectralResidual:
             fig.add_trace(go.Scatter(x=x_fn, y=y_fn, name='FN', mode="markers"))
 
         fig.update_layout(showlegend=True, title='Saliency map')
-        fig.write_image(
-            f'../results/imgs/sr_{self.dataset}_{self.filename}_saliency_map.png')
-
-        fig.data = []
+        return fig
 
     def detect(self, window_step):
         self.__anomaly_frame = self.__detect()

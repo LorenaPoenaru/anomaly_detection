@@ -4,7 +4,8 @@
 
 import numpy as np
 import pandas as pd
-import json
+import time
+import datetime
 from sys import argv
 from sklearn.metrics import f1_score
 
@@ -38,6 +39,7 @@ def get_range_proba(predict, label, delay=7):
 # set missing = 0
 def reconstruct_label(timestamp, label):
     timestamp = np.asarray(timestamp, np.int64)
+
     index = np.argsort(timestamp)
 
     timestamp_sorted = np.asarray(timestamp[index])
@@ -54,65 +56,32 @@ def reconstruct_label(timestamp, label):
     return new_label
 
 
-def label_evaluation(truth_file, result_file, delay=7):
-    data = {'result': False, 'data': "", 'message': ""}
+def label_evaluation(truth_df, result_df, delay=7):
 
-    if result_file[-4:] != '.csv':
-        data['message'] = "提交的文件必须是csv格式"
-        return json.dumps(data, ensure_ascii=False)
-    else:
-        result_df = pd.read_csv(result_file)
-
-    if 'KPI ID' not in result_df.columns or 'timestamp' not in result_df.columns or \
-                    'predict' not in result_df.columns:
-        data['message'] = "提交的文件必须包含KPI ID,timestamp,predict三列"
-        return json.dumps(data, ensure_ascii=False)
-
-    truth_df = pd.read_hdf(truth_file)
-
-    kpi_names = truth_df['KPI ID'].values
-    kpi_names = np.unique(kpi_names)
+    if not isinstance(truth["timestamp"][0], int):
+        truth["timestamp"] = [x for x in range(1, truth_df.shape[0] + 1)]
     y_true_list = []
     y_pred_list = []
 
-    for kpi_name in kpi_names:
+    truth = truth_df
+    y_true = reconstruct_label(truth["timestamp"], truth["is_anomaly"])
 
-        truth = truth_df[truth_df["KPI ID"] == kpi_name]
-        y_true = reconstruct_label(truth["timestamp"], truth["label"])
+    result = result_df
 
-        if kpi_name not in result_df["KPI ID"].values:
-            data['message'] = "提交的文件缺少KPI %s 的结果" % kpi_name
-            return json.dumps(data, ensure_ascii=False)
+    if len(truth) != len(result):
+        print('Length of true and predicted labels disagree!!')
+        return None
 
-        result = result_df[result_df["KPI ID"] == kpi_name]
+    y_pred = reconstruct_label(result["timestamp"], result["is_anomaly"])
 
-        if len(truth) != len(result):
-            data['message'] = "文件长度错误"
-            return json.dumps(data, ensure_ascii=False)
-
-        y_pred = reconstruct_label(result["timestamp"], result["predict"])
-
-        y_pred = get_range_proba(y_pred, y_true, delay)
-        y_true_list.append(y_true)
-        y_pred_list.append(y_pred)
+    y_pred = get_range_proba(y_pred, y_true, delay)
+    y_true_list.append(y_true)
+    y_pred_list.append(y_pred)
 
     try:
         fscore = f1_score(np.concatenate(y_true_list), np.concatenate(y_pred_list))
-    except:
-        data['message'] = "predict列只能是0或1"
-        return json.dumps(data, ensure_ascii=False)
+    except Exception as e:
+        print(e)
+        return None
 
-    data['result'] = True
-    data['data'] = fscore
-    data['message'] = '计算成功'
-
-    return json.dumps(data, ensure_ascii=False)
-
-
-if __name__ == '__main__':
-    _, truth_file, result_file, delay = argv
-    delay = (int)(delay)
-    print(label_evaluation(truth_file, result_file, delay))
-
-# run example:
-# python evaluation.py 'ground_truth.hdf' 'predict.csv' 2
+    return fscore
