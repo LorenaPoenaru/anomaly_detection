@@ -58,8 +58,6 @@ def reconstruct_label(timestamp, label):
 
 def label_evaluation(truth_df, result_df, delay=7):
 
-    if not isinstance(truth["timestamp"][0], int):
-        truth["timestamp"] = [x for x in range(1, truth_df.shape[0] + 1)]
     y_true_list = []
     y_pred_list = []
 
