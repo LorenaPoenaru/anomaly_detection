@@ -56,27 +56,21 @@ def reconstruct_label(timestamp, label):
     return new_label
 
 
-def label_evaluation(truth_df, result_df, delay=7):
+def label_evaluation(truth, result, delay=7):
 
     y_true_list = []
     y_pred_list = []
 
-    truth = truth_df
-    if isinstance(truth["timestamp"].tolist()[0], int):
-        y_true = reconstruct_label(truth["timestamp"], truth["is_anomaly"])
-    else:
-        y_true = reconstruct_label(list(truth.index.values), truth["is_anomaly"])
+    time_index = list(range(len(truth)))
 
-    result = result_df
+    y_true = reconstruct_label(time_index, truth)
+
 
     if len(truth) != len(result):
         print('Length of true and predicted labels disagree!!')
         return None
 
-    if isinstance(truth["timestamp"].tolist()[0], int):
-        y_pred = reconstruct_label(result["timestamp"], result["is_anomaly"])
-    else:
-        y_pred = reconstruct_label(list(result.index.values), result["is_anomaly"])
+    y_pred = reconstruct_label(time_index, result)
 
     y_pred = get_range_proba(y_pred, y_true, delay)
     y_true_list.append(y_true)
