@@ -50,6 +50,7 @@ class PCIAnomalyDetector:
         predictions = []
         anomaly_scores = np.zeros(len(ts))
         anomaly_labels = np.zeros(len(ts), dtype=np.int)
+        anomaly_labels_entropy = np.zeros(len(ts), dtype=np.int)
         m = len(ts)
         left_predictions = []
         right_predictions = []
