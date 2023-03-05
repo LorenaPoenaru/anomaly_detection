@@ -110,6 +110,7 @@ class FEDD():
         self.alerta = "Alerta"
         self.mudanca = "Mudanca"
         self.sensor_mudanca = True
+        self.n = 300
 
         ##########################
 
