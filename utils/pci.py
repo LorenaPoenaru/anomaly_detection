@@ -7,6 +7,7 @@ class PCIAnomalyDetector:
     def __init__(self, k: int, p: float, calculate_labels=True):
         assert 0 < p < 1, "p must be between 0 and 1"
 
+        # size of neighbourhood window
         self.k = k
         self.p = p
         self.w = np.concatenate((np.arange(1, k+1), np.arange(1, k+1)[::-1]))
@@ -53,9 +54,9 @@ class PCIAnomalyDetector:
         anomaly_labels_entropy = np.zeros(len(ts), dtype=np.int)
         m = len(ts)
         left_predictions = []
-        right_predictions = []
         for i in range(m):
             v = ts[i]
+            right_predictions = []
 
             start = i + len(right_predictions)
             for j in range(start, min(start+self.k, m)+1):
@@ -72,7 +73,7 @@ class PCIAnomalyDetector:
                 prediction_window = self._combine_left_right(left_predictions, right_predictions)
                 eta = self._generate_window(ts, i)
                 lower_bound, upper_bound = self._pci(v_hat, prediction_window, eta)
-                anomaly_labels[i] = int(not lower_bound < v_hat < upper_bound)
+                anomaly_labels[i] = int(not lower_bound < v < upper_bound)
 
             left_predictions.append(v_hat)
             if len(left_predictions) > self.k:
