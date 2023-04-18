@@ -8,6 +8,8 @@ import time
 import datetime
 from sys import argv
 from sklearn.metrics import f1_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
 
 
 # consider delay threshold and missing segments
@@ -78,8 +80,11 @@ def label_evaluation(truth, result, delay=7):
 
     try:
         fscore = f1_score(np.concatenate(y_true_list), np.concatenate(y_pred_list))
+        precision = precision_score(np.concatenate(y_true_list), np.concatenate(y_pred_list))
+        recall = recall_score(np.concatenate(y_true_list), np.concatenate(y_pred_list))
+        
     except Exception as e:
         print(e)
         return None
 
-    return fscore
+    return fscore, precision, recall
