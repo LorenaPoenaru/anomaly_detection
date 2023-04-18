@@ -58,7 +58,7 @@ def reconstruct_label(timestamp, label):
     return new_label
 
 
-def label_evaluation(truth, result, delay=7):
+def label_evaluation(truth, result, delay):
 
     y_true_list = []
     y_pred_list = []
