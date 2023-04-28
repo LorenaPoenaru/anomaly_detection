@@ -2,12 +2,14 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
+
 class Entropy():
     def __init__(self):
         pass
 
     def cal_entropy(self):
         pass
+
 
 class ApEn(Entropy):
     def __init__(self, u, m, r):
@@ -32,12 +34,13 @@ class ApEn(Entropy):
             for Xj in X:
                 if self._max_dist(Xi, Xj) <= self.r:
                     num += 1
-            C.append(num / (self.N - m +1))
+            C.append(num / (self.N - m + 1))
         phi = np.sum(np.log(C)) / (self.N - m + 1)
         return phi
 
     def cal_entropy(self):
-        return np.abs(self._phi(self.m+1) - self._phi(self.m))
+        return np.abs(self._phi(self.m + 1) - self._phi(self.m))
+
 
 class SampEn(Entropy):
     def __init__(self, u, m, r):
@@ -67,7 +70,7 @@ class SampEn(Entropy):
         return phi
 
     def cal_entropy(self):
-        return -np.log(self._phi(self.m+1) / self._phi(self.m))
+        return -np.log(self._phi(self.m + 1) / self._phi(self.m))
 
 
 class FsEn(Entropy):
@@ -79,7 +82,6 @@ class FsEn(Entropy):
 
     def _max_dist(self, xi, xj):
         return np.max([np.abs(a) - np.abs(b) for a, b in zip(xi, xj)])
-
 
     def _phi(self, m):
         X = []              # 重构的子序列
@@ -101,7 +103,7 @@ class FsEn(Entropy):
             for j in range(self.N - m + 1):
                 if i == j:
                     continue
-                Ai.append(np.exp(-np.log(2)*np.square(dij[i][j]/self.r)))
+                Ai.append(np.exp(-np.log(2) * np.square(dij[i][j] / self.r)))
             A.append(Ai)
         C = []
         for Ai in A:
@@ -112,8 +114,9 @@ class FsEn(Entropy):
     def cal_entropy(self):
         return np.log(self._phi(self.m)) - np.log(self._phi(self.m + 1))
 
+
 class PeEn(Entropy):
-    def __init__(self,u, m, l):
+    def __init__(self, u, m, l):
         self.u = u
         self.m = m
         self.l = l
@@ -133,7 +136,7 @@ class PeEn(Entropy):
         X = []
         for i in range(self.N - self.m + 1):
             Xi = []
-            for j in range(i, i + (self.m-1+1)*self.l, self.l):
+            for j in range(i, i + (self.m - 1 + 1) * self.l, self.l):
                 Xi.append(self.u[j])
             X.append(Xi)
 
@@ -141,8 +144,8 @@ class PeEn(Entropy):
         for Xi in X:
             dict = {}
             for i in range(len(Xi)):
-                dict[i+1] = Xi[i]
-            sorted_dict = sorted(dict.items(), key=lambda x:x[1])
+                dict[i + 1] = Xi[i]
+            sorted_dict = sorted(dict.items(), key=lambda x: x[1])
             j = []
             for x, y in sorted_dict:
                 j.append(x)
@@ -161,7 +164,7 @@ class PeEn(Entropy):
         for key in J_dict.keys():
             count = J_dict[key]
             p = count / len(J)
-            H.append(-p*np.log(p))
+            H.append(-p * np.log(p))
 
         Hp = np.sum(H)
         if std:
@@ -171,7 +174,7 @@ class PeEn(Entropy):
 
 
 class WeightedPeEn(Entropy):
-    def __init__(self,u, m, l):
+    def __init__(self, u, m, l):
         self.u = u
         self.m = m
         self.l = l
@@ -191,7 +194,7 @@ class WeightedPeEn(Entropy):
         X = []              # 重构的子序列
         for i in range(self.N - self.m + 1):
             Xi = []
-            for j in range(i, i + (self.m-1+1)*self.l, self.l):
+            for j in range(i, i + (self.m - 1 + 1) * self.l, self.l):
                 Xi.append(self.u[j])
             X.append(Xi)
 
@@ -200,13 +203,13 @@ class WeightedPeEn(Entropy):
             dict = {}
             var = np.var(Xi)
             for i in range(len(Xi)):
-                dict[i+1] = Xi[i]
-            sorted_dict = sorted(dict.items(), key=lambda x:x[1])
+                dict[i + 1] = Xi[i]
+            sorted_dict = sorted(dict.items(), key=lambda x: x[1])
             j = []
             dict_var = {}
             for x, y in sorted_dict:
                 j.append(x)
-            key = map(str,j)
+            key = map(str, j)
             key = ''.join(key)
             dict_var[key] = var
             J.append(dict_var)
@@ -231,7 +234,7 @@ class WeightedPeEn(Entropy):
         for key in J_dict.keys():
             w_sum = np.sum(J_dict[key])
             p = w_sum / weighted_sum
-            H.append(-p*np.log(p))
+            H.append(-p * np.log(p))
 
         Hp = np.sum(H)
         if std:
@@ -248,9 +251,9 @@ class IncrEn(Entropy):
         self.N = len(u)
 
     def sgn(self, x):
-        if x>0:
+        if x > 0:
             return 1
-        elif x<0:
+        elif x < 0:
             return -1
         else:
             return 0
@@ -271,7 +274,8 @@ class IncrEn(Entropy):
                 Xi.append(diff_u[j])
             X.append(Xi)
 
-        # 重构向量对应的模型向量 example:[[(s1,q1),(s2,q2)], [(s1,q1),(s2,q2)]] 其中[(s1,q1),(s2,q2)]代表一阶差分序列中每个子序列对应的模式向量
+        # 重构向量对应的模型向量 example:[[(s1,q1),(s2,q2)], [(s1,q1),(s2,q2)]]
+        # 其中[(s1,q1),(s2,q2)]代表一阶差分序列中每个子序列对应的模式向量
         X_w = []
         std = np.std(np.abs(diff_u))   # 窗口内一阶差的标准差
 
@@ -281,7 +285,7 @@ class IncrEn(Entropy):
             for j in range(self.m):
                 s = self.sgn(u[j])
                 q = self.cal_q(np.abs(u[j]), self.r, std)
-                u_w.append((s,q))
+                u_w.append((s, q))
             X_w.append(u_w)
 
         key_list = []     # 所有的w组合 [1111, 1110, -12-13]
@@ -292,9 +296,7 @@ class IncrEn(Entropy):
                     key.append(a)
             key_list.append(''.join(map(str, key)))
 
-
         # print(key_list)
-
 
         J_dict = {}
         for key in key_list:
@@ -307,7 +309,7 @@ class IncrEn(Entropy):
         for key in J_dict.keys():
             count = J_dict[key]
             p = count / len(key_list)
-            H.append(-p*np.log(p))
+            H.append(-p * np.log(p))
 
         en = np.sum(H)
         return en

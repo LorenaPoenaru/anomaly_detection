@@ -3,6 +3,8 @@ from pyhht.emd import EMD
 import numpy as np
 
 # EMD with extrema extension
+
+
 class EMDext():
 
     def __init__(self, series):
@@ -18,7 +20,7 @@ class EMDext():
 
         """
         series = self.series
-        n = 8 # 延拓多少个点
+        n = 8  # 延拓多少个点
         max_index = argrelmax(series)[0]
         min_index = argrelmin(series)[0]
         max_data = [series[i] for i in max_index]
@@ -33,11 +35,11 @@ class EMDext():
             if series[0] > min_data[0]:
                 # 以极大值作为对称中心
                 extra_data = []
-                for i in range(max_index[0]+1, n+1+1):
+                for i in range(max_index[0] + 1, n + 1 + 1):
                     extra_data.append(series[i])
 
                 for i in range(len(extra_data)):
-                    index = len(extra_data) -1 - i
+                    index = len(extra_data) - 1 - i
                     lefted_series.append(extra_data[index])
                 for i in range(max_index[0], len(series)):
                     lefted_series.append(series[i])
@@ -61,11 +63,11 @@ class EMDext():
             if series[0] < max_data[0]:
                 # 以极小值作为对称中心
                 extra_data = []
-                for i in range(min_index[0]+1, n+1+1):
+                for i in range(min_index[0] + 1, n + 1 + 1):
                     # ex_index = 2 * max_index[0] - i
                     extra_data.append(series[i])
                 for i in range(len(extra_data)):
-                    index = len(extra_data) -1 - i
+                    index = len(extra_data) - 1 - i
                     lefted_series.append(extra_data[index])
                 for i in range(min_index[0], len(series)):
                     lefted_series.append(series[i])
@@ -89,7 +91,6 @@ class EMDext():
         # print(lefted_series)
         # print('lefted ', lefted_num)
 
-
         series = np.array(lefted_series)
         max_index = argrelmax(series)[0]
         min_index = argrelmin(series)[0]
@@ -105,10 +106,9 @@ class EMDext():
                 # 以极大值作为对称中心
                 extra_data = []
                 for i in range(n):
-                    extra_data.append(series[max_index[-1]-1-i])
+                    extra_data.append(series[max_index[-1] - 1 - i])
 
-
-                for i in range(max_index[-1]+1):
+                for i in range(max_index[-1] + 1):
                     righted_series.append(series[i])
                 for i in range(len(extra_data)):
                     righted_series.append(extra_data[i])
@@ -119,7 +119,7 @@ class EMDext():
                 # 以左端点作为对称中心
                 extra_data = []
                 for i in range(n):
-                    extra_data.append(series[-1 -1 - i])
+                    extra_data.append(series[-1 - 1 - i])
 
                 for i in range(len(series)):
                     righted_series.append(series[i])
@@ -144,7 +144,6 @@ class EMDext():
                     righted_series.append(extra_data[i])
                 if len(righted_series) - len(series) > 0:
                     righted_num = len(righted_series) - len(series)
-
 
             elif series[-1] >= max_data[-1]:
 

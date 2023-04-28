@@ -5,6 +5,7 @@ from queue import deque
 from pyhht.emd import EMD
 from scipy.signal import argrelmax, argrelmin
 
+
 def showPlot(data):
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -12,6 +13,8 @@ def showPlot(data):
     plt.show()
 
 # the ETFE class to extract features
+
+
 class ETFE():
     def __init__(self, entropy_type=''):
         self.window_len = 100
@@ -20,8 +23,6 @@ class ETFE():
         self.entropy_list = []
         self.average_entropy_list = []
         self.entropy_type = entropy_type
-
-
 
     def cal_imfs(self, series):
 
@@ -73,8 +74,6 @@ class ETFE():
             return None
 
 
-
-
 # EMD with extrema extension
 class EMDBE():
 
@@ -94,11 +93,11 @@ class EMDBE():
         if max_index[0] < min_index[0]:
             if series[0] > min_data[0]:
                 extra_data = []
-                for i in range(max_index[0]+1, n+1+1):
+                for i in range(max_index[0] + 1, n + 1 + 1):
                     extra_data.append(series[i])
                 lefted_series = []
                 for i in range(len(extra_data)):
-                    index = len(extra_data) -1 - i
+                    index = len(extra_data) - 1 - i
                     lefted_series.append(extra_data[index])
                 for i in range(max_index[0], len(series)):
                     lefted_series.append(series[i])
@@ -121,12 +120,12 @@ class EMDBE():
         elif max_index[0] > min_index[0]:
             if series[0] < max_data[0]:
                 extra_data = []
-                for i in range(min_index[0]+1, n+1+1):
+                for i in range(min_index[0] + 1, n + 1 + 1):
                     # ex_index = 2 * max_index[0] - i
                     extra_data.append(series[i])
                 lefted_series = []
                 for i in range(len(extra_data)):
-                    index = len(extra_data) -1 - i
+                    index = len(extra_data) - 1 - i
                     lefted_series.append(extra_data[index])
                 for i in range(min_index[0], len(series)):
                     lefted_series.append(series[i])
@@ -150,7 +149,6 @@ class EMDBE():
         # print(lefted_series)
         # print('lefted ', lefted_num)
 
-
         series = np.array(lefted_series)
         max_index = argrelmax(series)[0]
         min_index = argrelmin(series)[0]
@@ -163,10 +161,10 @@ class EMDBE():
             if series[-1] > min_data[-1]:
                 extra_data = []
                 for i in range(n):
-                    extra_data.append(series[max_index[-1]-1-i])
+                    extra_data.append(series[max_index[-1] - 1 - i])
                 righted_series = []
 
-                for i in range(max_index[-1]+1):
+                for i in range(max_index[-1] + 1):
                     righted_series.append(series[i])
                 for i in range(len(extra_data)):
                     righted_series.append(extra_data[i])
@@ -176,7 +174,7 @@ class EMDBE():
             elif series[-1] <= min_data[-1]:
                 extra_data = []
                 for i in range(n):
-                    extra_data.append(series[-1 -1 - i])
+                    extra_data.append(series[-1 - 1 - i])
                 righted_series = []
 
                 for i in range(len(series)):
@@ -202,7 +200,6 @@ class EMDBE():
                     righted_series.append(extra_data[i])
                 if len(righted_series) - len(series) > 0:
                     righted_num = len(righted_series) - len(series)
-
 
             elif series[-1] >= max_data[-1]:
 
@@ -237,10 +234,8 @@ class EMDBE():
         imfs = emd.decompose()
         length = len(imfs[0])
 
-        #print('series len ',len(series), ' lefted num ', lefted_num, ' righted num ',righted_num)
+        # print('series len ',len(series), ' lefted num ', lefted_num, ' righted num ',righted_num)
         imfs = imfs[:, lefted_num:length - righted_num]
-
-
 
         # imf1 = imfs[0]
         # imf1_len = len(imf1)

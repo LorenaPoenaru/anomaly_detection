@@ -10,10 +10,12 @@ class PCIAnomalyDetector:
         # size of neighbourhood window
         self.k = k
         self.p = p
-        self.w = np.concatenate((np.arange(1, k+1), np.arange(1, k+1)[::-1]))
+        self.w = np.concatenate(
+            (np.arange(1, k + 1), np.arange(1, k + 1)[::-1]))
         self.calculate_labels = calculate_labels
 
-    def _pci(self, v: float, window_predictions: np.ndarray, eta: np.ndarray) -> Tuple[float, float]:
+    def _pci(self, v: float, window_predictions: np.ndarray,
+             eta: np.ndarray) -> Tuple[float, float]:
         t = stats.t.ppf(self.p, df=2 * self.k - 1)
         s = (eta - window_predictions).std()
         lower_bound = v - t * s * np.sqrt(1 + (1 / (2 * self.k)))
@@ -59,7 +61,7 @@ class PCIAnomalyDetector:
             right_predictions = []
 
             start = i + len(right_predictions)
-            for j in range(start, min(start+self.k, m)+1):
+            for j in range(start, min(start + self.k, m) + 1):
                 eta_ = self._generate_window(ts, j)
                 right_v = self._predict(eta_)
                 right_predictions.append(right_v)
@@ -70,9 +72,11 @@ class PCIAnomalyDetector:
             anomaly_scores[i] = abs(v_hat - v)
 
             if self.calculate_labels:
-                prediction_window = self._combine_left_right(left_predictions, right_predictions)
+                prediction_window = self._combine_left_right(
+                    left_predictions, right_predictions)
                 eta = self._generate_window(ts, i)
-                lower_bound, upper_bound = self._pci(v_hat, prediction_window, eta)
+                lower_bound, upper_bound = self._pci(
+                    v_hat, prediction_window, eta)
                 anomaly_labels[i] = int(not lower_bound < v < upper_bound)
 
             left_predictions.append(v_hat)

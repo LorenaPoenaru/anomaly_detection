@@ -1,4 +1,5 @@
-# from https://github.com/HPI-Information-Systems/TimeEval-algorithms/tree/main/fft
+# from
+# https://github.com/HPI-Information-Systems/TimeEval-algorithms/tree/main/fft
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import List
@@ -47,6 +48,7 @@ def reduce_parameters(f: np.ndarray, k: int) -> np.ndarray:
         transformed[k:-(k - 1)] = 0
     return transformed
 
+
 def series_filter(values, kernel_size=3):
     """
     Filter a time series. Practically, calculated mean value inside kernel size.
@@ -57,7 +59,8 @@ def series_filter(values, kernel_size=3):
     """
     filter_values = np.cumsum(values, dtype=float)
 
-    filter_values[kernel_size:] = filter_values[kernel_size:] - filter_values[:-kernel_size]
+    filter_values[kernel_size:] = filter_values[kernel_size:] - \
+        filter_values[:-kernel_size]
     filter_values[kernel_size:] = filter_values[kernel_size:] / kernel_size
 
     for i in range(1, kernel_size):
@@ -66,7 +69,8 @@ def series_filter(values, kernel_size=3):
     return filter_values
 
 
-def calculate_local_outlier(data: np.ndarray, k: int, c: int, threshold: float) -> List[LocalOutlier]:
+def calculate_local_outlier(
+        data: np.ndarray, k: int, c: int, threshold: float) -> List[LocalOutlier]:
     """
     :param data: input data (1-dimensional)
     :param k: number of parameters to be used in IFFT
@@ -92,7 +96,8 @@ def calculate_local_outlier(data: np.ndarray, k: int, c: int, threshold: float) 
         if so[i] > mso:
             # average value of 'c' neighbors on both sides
             nav = np.average(data[max(i - c, 0):min(i + c, n - 1)])
-            # add the local difference (difference of the point and its neighbors) to the collection
+            # add the local difference (difference of the point and its
+            # neighbors) to the collection
             scores.append(data[i] - nav)
             # add the index of suspected outlier to the collection
             score_idxs.append(i)
@@ -115,7 +120,7 @@ def calculate_local_outlier(data: np.ndarray, k: int, c: int, threshold: float) 
 
 
 def calculate_region_outlier(sign_of_z_result: List[LocalOutlier], max_region: int, max_local_diff: int) -> List[
-    RegionOutlier]:
+        RegionOutlier]:
     """
     :param sign_of_z_result: list of local outliers with their z_score
     :param max_region_: maximum outlier region length
@@ -128,7 +133,6 @@ def calculate_region_outlier(sign_of_z_result: List[LocalOutlier], max_region: i
             if data[index].sign != data[pos].sign:
                 return True
         return False
-
 
     regions = []
     count = len(sign_of_z_result)
@@ -145,13 +149,14 @@ def calculate_region_outlier(sign_of_z_result: List[LocalOutlier], max_region: i
                 n = 0
                 while n < max_region:
                     if i < count - 1 and \
-                        sign_of_z_result[i].sign == sign_of_z_result[i+1].sign and \
-                        next_opposite_sign(i, max_local_diff, sign_of_z_result):
+                            sign_of_z_result[i].sign == sign_of_z_result[i + 1].sign and \
+                            next_opposite_sign(i, max_local_diff, sign_of_z_result):
                         end_idx = i
                         regions.append(RegionOutlier(
                             start_idx=start_idx,
                             end_idx=end_idx,
-                            score=np.mean([abs(l.z_score) for l in sign_of_z_result[start_idx: end_idx + 1]])
+                            score=np.mean(
+                                [abs(l.z_score) for l in sign_of_z_result[start_idx: end_idx + 1]])
                         ))
                         m = m + 1
                         break
@@ -160,7 +165,7 @@ def calculate_region_outlier(sign_of_z_result: List[LocalOutlier], max_region: i
                         n = n + 1
             else:
                 i = i + 1
-                m =  m + 1
+                m = m + 1
 
     return regions
 
@@ -183,10 +188,14 @@ def detect_anomalies(data: np.ndarray,
     """
     neighbor_c = local_neighbor_window // 2
     # print(ifft_parameters, neighbor_c, local_outlier_threshold, max_region_size, max_sign_change_distance)
-    local_outliers = calculate_local_outlier(data, ifft_parameters, neighbor_c, local_outlier_threshold)
+    local_outliers = calculate_local_outlier(
+        data, ifft_parameters, neighbor_c, local_outlier_threshold)
     # print(f"Found {len(local_outliers)} local outliers")
 
-    regions = calculate_region_outlier(local_outliers, max_region_size, max_sign_change_distance)
+    regions = calculate_region_outlier(
+        local_outliers,
+        max_region_size,
+        max_sign_change_distance)
     # print("Regions: ", regions)
 
     # broadcast region scores to data points
@@ -194,7 +203,8 @@ def detect_anomalies(data: np.ndarray,
     for reg in regions:
         start_local = local_outliers[reg.start_idx]
         end_local = local_outliers[reg.end_idx]
-        anomaly_scores[start_local.index:end_local.index + 1] = [reg.score] * (end_local.index - start_local.index + 1)
+        anomaly_scores[start_local.index:end_local.index +
+                       1] = [reg.score] * (end_local.index - start_local.index + 1)
 
     import matplotlib.pyplot as plt
     plt.Figure()
