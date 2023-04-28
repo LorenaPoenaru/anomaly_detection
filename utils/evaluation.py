@@ -3,11 +3,10 @@
 # https://arxiv.org/pdf/1906.03821.pdf
 
 import numpy as np
-import pandas as pd
-import time
-import datetime
 from sys import argv
-from sklearn.metrics import f1_score, precision_score, recall_score
+from sklearn.metrics import f1_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
 
 
 # consider delay threshold and missing segments
@@ -56,7 +55,7 @@ def reconstruct_label(timestamp, label):
     return new_label
 
 
-def label_evaluation(truth, result, delay=7):
+def label_evaluation(truth, result, delay):
 
     y_true_list = []
     y_pred_list = []
@@ -77,7 +76,7 @@ def label_evaluation(truth, result, delay=7):
     y_pred_list.append(y_pred)
 
     try:
-        fscore = f1_score(np.concatenate(y_true_list), np.concatenate(y_pred_list))
+        fscore = f1_score(np.concatenate(y_true_list), np.concatenate(y_pred_list))        
         precision = precision_score(np.concatenate(y_true_list), np.concatenate(y_pred_list))
         recall = recall_score(np.concatenate(y_true_list), np.concatenate(y_pred_list))
 
