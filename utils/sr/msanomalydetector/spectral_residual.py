@@ -94,25 +94,6 @@ class SpectralResidual:
             self.drift_detector.record(result['score'])
         return result
 
-    def _g(self, x1, y1, x2, y2):
-        slope = (y2 - y1) / (x2 - x1)
-        return slope
-
-    def _stuff_g_vals(self, wdw_sz):
-        m = 5
-        self.__series__['timestamp'] = self.__series__['timestamp'].apply(
-            lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S').timestamp())
-        for i in range(self.data_in_memory_sz-wdw_sz):
-            ghat = np.mean([self._g(self.__series__.shape[0],
-                                    self.__series__['value'].tolist()[-1],
-                                    self.__series__.shape[0]-i,
-                                    self.__series__['value'].tolist()[-1-i])
-                            for i in range(self.__series__.shape[0] - m, self.__series__.shape[0])])
-            self.__series__.append({
-                'timestamp': int(self.__series__['timestamp'].tolist()[-1]) + 1.0,
-                'value': self.__series__['value'].tolist()[self.__series__.shape[0] - m + 1] + ghat * m},
-                ignore_index=True)
-
     def predict(self, window_step, current_points):
         self.__anomaly_frame = self.__detect()
         try:
@@ -148,7 +129,7 @@ class SpectralResidual:
         self.history = self.history.append(result[-current_points:], ignore_index=True)
         return result[-current_points:]
 
-    def plot(self, datatest, threshold_type='dynamic'):
+    def plot(self, datatest, threshold_type='static'):
         fig = go.Figure()
 
         datatest.set_index('timestamp', inplace=True)
@@ -280,8 +261,6 @@ class SpectralResidual:
         trans.real[eps_index] = 0
         trans.imag[eps_index] = 0
 
-        wave_r = np.fft.ifft(trans)
-        mag = np.sqrt(wave_r.real ** 2 + wave_r.imag ** 2)
         return mag
 
     @staticmethod
