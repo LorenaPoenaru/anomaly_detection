@@ -4,11 +4,11 @@ Please, run single jupyter notebook for the whole set of experiments on static m
 
 ## The models included are:
 
-* `PCI`
+* `PCI` https://www.hindawi.com/journals/mpe/2014/879736/
 We use an adoptation of https://github.com/HPI-Information-Systems/TimeEval-algorithms/tree/main/pci . Our adoptation sits in utils/pci.py
-* `FFT` 
+* `FFT` https://dl.acm.org/doi/10.5555/1789574.1789615
 We use an adoptation of https://github.com/HPI-Information-Systems/TimeEval-algorithms/tree/main/fft . Our adoptation sits in utils/fft.py
-* `SR`
+* `SR` https://arxiv.org/pdf/1906.03821.pdf
 We use https://github.com/y-bar/ml-based-anomaly-detection
 
 We install it via pip in the notebook

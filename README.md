@@ -16,8 +16,8 @@ Our work attempts to investigate the most applicable maintanance approach for va
 │   ├── fedd_results            Results of a FEDD drift detector (reusable for retraining)
 │   ├── scores    
 │   └── imgs     
-├── dynamic_models              Dynamic signal reconstruction models: LSTM AE, SR CNN. See foldre readme
-├── static_models               Static signal reconstruction models: FFT, PCI, SR. See foldre readme
+├── dynamic_models              Dynamic signal reconstruction models: LSTM AE, SR CNN. See README within folder
+├── static_models               Static signal reconstruction models: FFT, PCI, SR. See README within folder
 ├── utils                       utils used during training
 │   ├── drift_detection
 │   └── sr
