@@ -1,11 +1,8 @@
-# EVALUATION SCRIPT USED IN SR PAPER FROM 
-# https://github.com/iopsai/iops/blob/master/evaluation/evaluation.py 
+# EVALUATION SCRIPT USED IN SR PAPER FROM
+# https://github.com/iopsai/iops/blob/master/evaluation/evaluation.py
 # https://arxiv.org/pdf/1906.03821.pdf
 
 import numpy as np
-import pandas as pd
-import time
-import datetime
 from sys import argv
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
@@ -52,7 +49,8 @@ def reconstruct_label(timestamp, label):
 
     idx = (timestamp_sorted - timestamp_sorted[0]) // interval
 
-    new_label = np.zeros(shape=((timestamp_sorted[-1] - timestamp_sorted[0]) // interval + 1,), dtype=np.int)
+    new_label = np.zeros(shape=(
+        (timestamp_sorted[-1] - timestamp_sorted[0]) // interval + 1,), dtype=np.int)
     new_label[idx] = label
 
     return new_label
@@ -67,7 +65,6 @@ def label_evaluation(truth, result, delay):
 
     y_true = reconstruct_label(time_index, truth)
 
-
     if len(truth) != len(result):
         print('Length of true and predicted labels disagree!!')
         return None
@@ -79,10 +76,16 @@ def label_evaluation(truth, result, delay):
     y_pred_list.append(y_pred)
 
     try:
-        fscore = f1_score(np.concatenate(y_true_list), np.concatenate(y_pred_list))
-        precision = precision_score(np.concatenate(y_true_list), np.concatenate(y_pred_list))
-        recall = recall_score(np.concatenate(y_true_list), np.concatenate(y_pred_list))
-        
+        fscore = f1_score(
+            np.concatenate(y_true_list),
+            np.concatenate(y_pred_list))
+        precision = precision_score(
+            np.concatenate(y_true_list),
+            np.concatenate(y_pred_list))
+        recall = recall_score(
+            np.concatenate(y_true_list),
+            np.concatenate(y_pred_list))
+
     except Exception as e:
         print(e)
         return None

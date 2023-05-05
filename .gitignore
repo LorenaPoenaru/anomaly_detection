@@ -33,5 +33,6 @@ share/python-wheels/
 MANIFEST
 
 datasets/
-results/
+results/imgs/
+results/scores/
 venv/

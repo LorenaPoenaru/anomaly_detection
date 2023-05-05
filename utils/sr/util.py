@@ -92,12 +92,16 @@ def deanomaly_entire(values, entire_anomalies):
         step = 1
         start = max(idx - step, 0)
         end = min(len(values) - 1, idx + step)
-        fit_values = [(i, values[i]) for i in range(start, end+1) if i not in entire_anomalies]
-        while len(fit_values) < min_points_to_fit and (start > 0 or end < len(values)-1):
+        fit_values = [(i, values[i]) for i in range(
+            start, end + 1) if i not in entire_anomalies]
+        while len(fit_values) < min_points_to_fit and (
+                start > 0 or end < len(values) - 1):
             step = step + 2
             start = max(idx - step, 0)
             end = min(len(values) - 1, idx + step)
-            fit_values = [(i, values[i]) for i in range(start, end+1) if i not in entire_anomalies]
+            fit_values = [
+                (i, values[i]) for i in range(
+                    start, end + 1) if i not in entire_anomalies]
 
         if len(fit_values) > 1:
             x, y = tuple(zip(*fit_values))

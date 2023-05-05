@@ -1,4 +1,5 @@
-# from https://github.com/HPI-Information-Systems/TimeEval-algorithms/tree/main/fft
+# from
+# https://github.com/HPI-Information-Systems/TimeEval-algorithms/tree/main/fft
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import List
@@ -48,7 +49,28 @@ def reduce_parameters(f: np.ndarray, k: int) -> np.ndarray:
     return transformed
 
 
-def calculate_local_outlier(data: np.ndarray, k: int, c: int, threshold: float) -> List[LocalOutlier]:
+def series_filter(values, kernel_size=3):
+    """
+    Filter a time series. Practically, calculated mean value inside kernel size.
+    As math formula, see https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html.
+    :param values:
+    :param kernel_size:
+    :return: The list of filtered average
+    """
+    filter_values = np.cumsum(values, dtype=float)
+
+    filter_values[kernel_size:] = filter_values[kernel_size:] - \
+        filter_values[:-kernel_size]
+    filter_values[kernel_size:] = filter_values[kernel_size:] / kernel_size
+
+    for i in range(1, kernel_size):
+        filter_values[i] /= i + 1
+
+    return filter_values
+
+
+def calculate_local_outlier(
+        data: np.ndarray, k: int, c: int, threshold: float) -> List[LocalOutlier]:
     """
     :param data: input data (1-dimensional)
     :param k: number of parameters to be used in IFFT
@@ -61,6 +83,7 @@ def calculate_local_outlier(data: np.ndarray, k: int, c: int, threshold: float) 
     # Fourier transform of data
     y = reduce_parameters(np.fft.fft(data), k)
     f2 = np.real(np.fft.ifft(y))
+
     # difference of actual data value and the fft fitted curve
     so = np.abs(f2 - data)
     # average difference
@@ -73,7 +96,8 @@ def calculate_local_outlier(data: np.ndarray, k: int, c: int, threshold: float) 
         if so[i] > mso:
             # average value of 'c' neighbors on both sides
             nav = np.average(data[max(i - c, 0):min(i + c, n - 1)])
-            # add the local difference (difference of the point and its neighbors) to the collection
+            # add the local difference (difference of the point and its
+            # neighbors) to the collection
             scores.append(data[i] - nav)
             # add the index of suspected outlier to the collection
             score_idxs.append(i)
@@ -89,53 +113,59 @@ def calculate_local_outlier(data: np.ndarray, k: int, c: int, threshold: float) 
         # deviation of local difference
         z_score = (scores[i] - ms) / sds
         # declare this as an outlier if greater than threshold
-        if abs(z_score) > threshold * sds:
+        if abs(z_score) > threshold:
             index = score_idxs[i]
             results.append(LocalOutlier(index, z_score))
     return results
 
 
-def calculate_region_outlier(l_outliers: List[LocalOutlier], max_region_length: int, max_local_diff: int) -> List[
-    RegionOutlier]:
+def calculate_region_outlier(sign_of_z_result: List[LocalOutlier], max_region: int, max_local_diff: int) -> List[
+        RegionOutlier]:
     """
-    :param l_outliers: list of local outliers with their z_score
-    :param max_region_length: maximum outlier region length
+    :param sign_of_z_result: list of local outliers with their z_score
+    :param max_region_: maximum outlier region length
     :param max_local_diff: maximum difference between two closed oppositely signed outliers
     :return: list of region outliers
     """
 
-    def distance(a: int, b: int) -> int:
-        if a > b:
-            h = a
-            a = b
-            b = h
-        return l_outliers[b].index - l_outliers[a].index
+    def next_opposite_sign(index, allowed_diff, data):
+        for pos in range(index, min(len(data), index + allowed_diff)):
+            if data[index].sign != data[pos].sign:
+                return True
+        return False
 
     regions = []
-    i = 0
-    n_l = len(l_outliers) - 1
-    while i < n_l:
-        s_sign = l_outliers[i].sign
-        s_sign2 = l_outliers[i + 1].sign
-        if s_sign != s_sign2 and distance(i, i + 1) <= max_local_diff:
-            i += 1
-            start_idx = i
-            for i in range(i + 1, n_l):
-                e_sign = l_outliers[i].sign
-                e_sign2 = l_outliers[i + 1].sign
-                if s_sign2 == e_sign and distance(start_idx, i) <= max_region_length \
-                        and e_sign != e_sign2 and distance(i, i + 1) <= max_local_diff:
-                    end_idx = i
-                    regions.append(RegionOutlier(
-                        start_idx=start_idx,
-                        end_idx=end_idx,
-                        score=np.mean([abs(l.z_score) for l in l_outliers[start_idx: end_idx + 1]])
-                    ))
-                    i += 1
-                    break
-            i = start_idx
-        else:
-            i += 1
+    count = len(sign_of_z_result)
+    for i in range(1, count):
+        sign = sign_of_z_result[i].sign
+        m = 0
+        while m < max_local_diff:
+            if i >= count:
+                break
+            if (sign != sign_of_z_result[i].sign):
+                # mark i as start of outlier region
+                start_idx = i
+                i += 1
+                n = 0
+                while n < max_region:
+                    if i < count - 1 and \
+                            sign_of_z_result[i].sign == sign_of_z_result[i + 1].sign and \
+                            next_opposite_sign(i, max_local_diff, sign_of_z_result):
+                        end_idx = i
+                        regions.append(RegionOutlier(
+                            start_idx=start_idx,
+                            end_idx=end_idx,
+                            score=np.mean(
+                                [abs(l.z_score) for l in sign_of_z_result[start_idx: end_idx + 1]])
+                        ))
+                        m = m + 1
+                        break
+                    else:
+                        i = i + 1
+                        n = n + 1
+            else:
+                i = i + 1
+                m = m + 1
 
     return regions
 
@@ -158,10 +188,14 @@ def detect_anomalies(data: np.ndarray,
     """
     neighbor_c = local_neighbor_window // 2
     # print(ifft_parameters, neighbor_c, local_outlier_threshold, max_region_size, max_sign_change_distance)
-    local_outliers = calculate_local_outlier(data, ifft_parameters, neighbor_c, local_outlier_threshold)
+    local_outliers = calculate_local_outlier(
+        data, ifft_parameters, neighbor_c, local_outlier_threshold)
     # print(f"Found {len(local_outliers)} local outliers")
 
-    regions = calculate_region_outlier(local_outliers, max_region_size, max_sign_change_distance)
+    regions = calculate_region_outlier(
+        local_outliers,
+        max_region_size,
+        max_sign_change_distance)
     # print("Regions: ", regions)
 
     # broadcast region scores to data points
@@ -169,14 +203,15 @@ def detect_anomalies(data: np.ndarray,
     for reg in regions:
         start_local = local_outliers[reg.start_idx]
         end_local = local_outliers[reg.end_idx]
-        anomaly_scores[start_local.index:end_local.index + 1] = [reg.score] * (end_local.index - start_local.index + 1)
+        anomaly_scores[start_local.index:end_local.index +
+                       1] = [reg.score] * (end_local.index - start_local.index + 1)
 
-    # import matplotlib.pyplot as plt
-    # plt.Figure()
-    # plt.title("Anomaly region scores")
-    # plt.plot(range(len(data)), data, label="Data")
-    # plt.plot(range(len(data)), anomaly_scores, label="Anomaly Scores")
-    # plt.legend()
-    # plt.show()
+    import matplotlib.pyplot as plt
+    plt.Figure()
+    plt.title("Anomaly region scores")
+    plt.plot(range(len(data)), data, label="Data")
+    plt.plot(range(len(data)), anomaly_scores, label="Anomaly Scores")
+    plt.legend()
+    plt.savefig('example.png')
 
     return anomaly_scores

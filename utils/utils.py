@@ -83,7 +83,8 @@ def read_csv(path):
     return tm, vl
 
 
-def sr_cnn(data_path, model_path, win_size, lr, epochs, batch, num_worker, load_path=None, model_update = None, update_split = None):
+def sr_cnn(data_path, model_path, win_size, lr, epochs, batch,
+           num_worker, load_path=None, model_update=None, update_split=None):
     def adjust_lr(optimizer, epoch):
         base_lr = lr
         cur_lr = base_lr * (0.5 ** ((epoch + 10) // 10))
@@ -99,7 +100,7 @@ def sr_cnn(data_path, model_path, win_size, lr, epochs, batch, num_worker, load_
         for W in net.parameters():
             l2_reg = l2_reg + W.norm(2)
         kpiweight = torch.ones(lb.shape)
-        kpiweight[lb == 1] = win_size // 5 # kpi = 10 yahoo & nab = 5
+        kpiweight[lb == 1] = win_size // 5  # kpi = 10 yahoo & nab = 5
         kpiweight = kpiweight
         BCE = F.binary_cross_entropy(x, lb, weight=kpiweight, reduction='sum')
         return l2_reg * l2_weight + BCE
@@ -130,7 +131,8 @@ def sr_cnn(data_path, model_path, win_size, lr, epochs, batch, num_worker, load_
         train_loss = 0
         totTP, totFP, totTN, totFN = 0, 0, 0, 0
         threshold = 0.5
-        for batch_idx, (inputs, lb) in enumerate(tqdm(train_loader, desc="Iteration")):
+        for batch_idx, (inputs, lb) in enumerate(
+                tqdm(train_loader, desc="Iteration")):
             optimizer.zero_grad()
             inputs = inputs.float()
             lb = lb.float()
@@ -158,8 +160,8 @@ def sr_cnn(data_path, model_path, win_size, lr, epochs, batch, num_worker, load_
             if batch_idx % 100 == 0:
                 print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                     epoch, batch_idx * len(inputs), len(train_loader.dataset),
-                           100. * batch_idx / len(train_loader),
-                           loss1.item() / len(inputs)))
+                    100. * batch_idx / len(train_loader),
+                    loss1.item() / len(inputs)))
 
     model = Anomaly(win_size)
     net = model.cpu()
@@ -168,9 +170,13 @@ def sr_cnn(data_path, model_path, win_size, lr, epochs, batch, num_worker, load_
     print(net)
     base_lr = lr
     bp_parameters = filter(lambda p: p.requires_grad, net.parameters())
-    optimizer = optim.SGD(bp_parameters, lr=base_lr, momentum=0.9, weight_decay=0.0)
+    optimizer = optim.SGD(
+        bp_parameters,
+        lr=base_lr,
+        momentum=0.9,
+        weight_decay=0.0)
 
-    if load_path != None:
+    if load_path is not None:
         net = load_model(model, load_path)
         print("model loaded")
 
@@ -180,7 +186,18 @@ def sr_cnn(data_path, model_path, win_size, lr, epochs, batch, num_worker, load_
         train(epoch, net, gen_data)
         adjust_lr(optimizer, epoch)
         if epoch % 5 == 0:
-            save_model(model, model_path + 'srcnn_retry_' + str(model_update) + '_' + str(update_split) + '_' + str(epoch) + '_' + str(win_size) + '.bin')
+            save_model(
+                model,
+                model_path +
+                'srcnn_retry_' +
+                str(model_update) +
+                '_' +
+                str(update_split) +
+                '_' +
+                str(epoch) +
+                '_' +
+                str(win_size) +
+                '.bin')
     return
 
 
@@ -269,7 +286,8 @@ class gen_set(Dataset):
         return resdata, reslb
 
 
-def sr_cnn_eval(timestamp, value, label, window, net, ms_optioin, threshold=0.95, back_k=0, backaddnum=5, step=1):
+def sr_cnn_eval(timestamp, value, label, window, net, ms_optioin,
+                threshold=0.95, back_k=0, backaddnum=5, step=1):
     def Var(x):
         return Variable(x)
 
@@ -289,8 +307,8 @@ def sr_cnn_eval(timestamp, value, label, window, net, ms_optioin, threshold=0.95
         res = np.zeros(aa.shape, np.int64)
         res[aa > threshold] = 1
 
-        #print(f'Prediction: {res}')
-        #print(f'Raw output: {aa}')
+        # print(f'Prediction: {res}')
+        # print(f'Raw output: {aa}')
 
         return res, aa
 
@@ -307,11 +325,12 @@ def sr_cnn_eval(timestamp, value, label, window, net, ms_optioin, threshold=0.95
         head = max(0, pt - (win_size - backaddnum))
         tail = min(length, pt)
 
-        #print(label[head:tail + back])
+        # print(label[head:tail + back])
 
-        wave = np.array(SpectralResidual.extend_series(value[head:tail + back]))
+        wave = np.array(SpectralResidual.extend_series(
+            value[head:tail + back]))
         mag = spectral_residual(wave)
-        #print(np.mean(mag))
+        # print(np.mean(mag))
         modeloutput, rawout = modelwork(mag, net)
         for ipt in range(pt - step - back, pt - back):
             detres.append(modeloutput[ipt - head])
@@ -321,7 +340,8 @@ def sr_cnn_eval(timestamp, value, label, window, net, ms_optioin, threshold=0.95
 
     if ms_optioin == 'anomaly':
         last = -1
-        interval = min([timestamp[i] - timestamp[i - 1] for i in range(1, len(timestamp))])
+        interval = min([timestamp[i] - timestamp[i - 1]
+                       for i in range(1, len(timestamp))])
         for i in range(1, len(timestamp)):
             if timestamp[i] - timestamp[i - 1] > interval:
                 if last >= 0 and i - last < 1000:
@@ -334,7 +354,3 @@ def sr_cnn_eval(timestamp, value, label, window, net, ms_optioin, threshold=0.95
 
 
 # In[ ]:
-
-
-
-

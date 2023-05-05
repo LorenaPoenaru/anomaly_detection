@@ -75,8 +75,18 @@ class Anomaly(nn.Module):
     def __init__(self, window=1024):
         self.window = window
         super(Anomaly, self).__init__()
-        self.layer1 = nn.Conv1d(window, window, kernel_size=1, stride=1, padding=0)
-        self.layer2 = nn.Conv1d(window, 2 * window, kernel_size=1, stride=1, padding=0)
+        self.layer1 = nn.Conv1d(
+            window,
+            window,
+            kernel_size=1,
+            stride=1,
+            padding=0)
+        self.layer2 = nn.Conv1d(
+            window,
+            2 * window,
+            kernel_size=1,
+            stride=1,
+            padding=0)
         self.fc1 = nn.Linear(2 * window, 4 * window)
         self.fc2 = nn.Linear(4 * window, window)
         self.relu = nn.ReLU(inplace=True)
@@ -97,12 +107,12 @@ class Anomaly(nn.Module):
 def save_model(model, model_path):
     try:
         torch.save(model.state_dict(), model_path)
-    except:
+    except BaseException:
         torch.save(model, model_path)
 
 
 def load_model(model, path):
-    #print("loading %s" % path)
+    # print("loading %s" % path)
     print("loading path")
     with open(path, 'rb') as f:
         pretrained = torch.load(f, map_location=lambda storage, loc: storage)
@@ -111,4 +121,3 @@ def load_model(model, path):
         model_dict.update(pretrained)
         model.load_state_dict(model_dict)
     return model
-
