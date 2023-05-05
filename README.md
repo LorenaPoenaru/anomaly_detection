@@ -32,4 +32,10 @@ Please, send a request through the official website to obtain Yahoo data
 ### Drift detectors
 
 * `FEDD` 
-We use own adaptation of https://github.com/GustavoHFMO/IDPSO-ELM-S/blob/008477e80c37ed5d0ff7f2d75394d85542b046c0/detectores/FEDD.py#L40 that can be found under utils/drift_detection
+We use own adaptation of https://github.com/GustavoHFMO/IDPSO-ELM-S/blob/008477e80c37ed5d0ff7f2d75394d85542b046c0/detectores/FEDD.py that can be found under utils/drift_detection
+
+### Models
+ ### Static
+ * `PCI` https://www.hindawi.com/journals/mpe/2014/879736/
+ * `FFT` https://dl.acm.org/doi/10.5555/1789574.1789615
+ * `SR` https://arxiv.org/pdf/1906.03821.pdf
