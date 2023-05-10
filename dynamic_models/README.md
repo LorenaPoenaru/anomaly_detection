@@ -4,6 +4,14 @@
 
 Datasets should be stored into folders 'NAB_realAWSClodwatch' and 'Yahoo_A1Benchmark'.
 
+## Models Specifications
+
+LSTM-AE does not require parameter changes when running on Yahoo or NAB. SR-CNN does require the following parameter changes:
+- lr = 1e-5 for NAB and lr = 1e-6 for Yahoo. The lr parameter is given at the beginning of Main.
+
+When running SR-CNN, create a folder called 'snapshot' where the script will save the model.
+
+
 ## data_preparation_srcnn
 
 The data for SR-CNN needs to be split into a folder called train and a folder called test.
