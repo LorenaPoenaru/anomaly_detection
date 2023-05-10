@@ -1,8 +1,13 @@
 # Experiments overview
 
+## Data
+
+Datasets should be stored into folders 'NAB_realAWSClodwatch' and 'Yahoo_A1Benchmark'.
+
 ## data_preparation_srcnn
 
-Run this nnotebook to prepare data for SRCNN
+The data for SR-CNN needs to be split into a folder called train and a folder called test.
+Run this notebook to prepare data for SR-CNN.
 
 ## lstmae_fedd_FH
 
