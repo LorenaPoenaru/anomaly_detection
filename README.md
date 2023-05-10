@@ -30,10 +30,56 @@ Please, send a request through the official website to obtain Yahoo data
 ### Drift detectors
 
 * `FEDD` 
-We use own adaptation of https://github.com/GustavoHFMO/IDPSO-ELM-S/blob/008477e80c37ed5d0ff7f2d75394d85542b046c0/detectores/FEDD.py that can be found under utils/drift_detection
+We use own adaptation of https://github.com/GustavoHFMO/IDPSO-ELM-S/blob/008477e80c37ed5d0ff7f2d75394d85542b046c0/detectores/FEDD.py
 
 ### Models
- ### Static
- * `PCI` https://www.hindawi.com/journals/mpe/2014/879736/
- * `FFT` https://dl.acm.org/doi/10.5555/1789574.1789615
- * `SR` https://arxiv.org/pdf/1906.03821.pdf
+ #### Static
+* `PCI` 
+
+    *Yufeng, Y., Zhu, Y., Li, S., Wan, D.: Time series outlier detection based
+    on sliding window prediction. Mathematical Problems in Engineering
+    2014 (10 2014)*
+
+    We use an adoptation of https://github.com/HPI-Information-Systems/TimeEval-algorithms/tree/main/pci . Our adoptation sits in utils/pci.py
+* `FFT`
+
+    *Rasheed, F., Peng, P., Alhajj, R., Rokne, J.: Fourier transform based spa-
+    tial outlier mining. In: Proceedings of the 10th International Conference
+    on Intelligent Data Engineering and Automated Learning. p. 317–324
+    (2009)*
+
+    We use an adoptation of https://github.com/HPI-Information-Systems/TimeEval-algorithms/tree/main/fft . Our adoptation sits in utils/fft.py
+* `SR`
+
+    *Ren, H., Xu, B., Wang, Y., Yi, C., Huang, C., Kou, X., Xing, T.,
+    Yang, M., Tong, J., Zhang, Q.: Time-series anomaly detection service
+    at microsoft. In: Proceedings of the 25th ACM SIGKDD Interna-
+    tional Conference on Knowledge Discovery &amp; Data Mining. p.
+    3009–3017. KDD ’19, Association for Computing Machinery, New
+    York, NY, USA (2019). https://doi.org/10.1145/3292500.3330680, https:
+    //doi.org/10.1145/3292500.3330680*
+
+    We use https://github.com/y-bar/ml-based-anomaly-detection
+
+ #### Dynamic
+* `LSTM AE` 
+
+    *Provotar, O., Linder, Y.M., Veres, M.: Unsupervised anomaly detection
+    in time series using lstm-based autoencoders. 2019 IEEE International
+    Conference on Advanced Trends in Information Theory (ATIT) pp. 513–
+    517 (2019)*
+
+    We use own implementation
+
+* `SR CNN`
+
+    *Ren, H., Xu, B., Wang, Y., Yi, C., Huang, C., Kou, X., Xing, T.,
+    Yang, M., Tong, J., Zhang, Q.: Time-series anomaly detection service
+    at microsoft. In: Proceedings of the 25th ACM SIGKDD Interna-
+    tional Conference on Knowledge Discovery &amp; Data Mining. p.
+    3009–3017. KDD ’19, Association for Computing Machinery, New
+    York, NY, USA (2019). https://doi.org/10.1145/3292500.3330680, https:
+    //doi.org/10.1145/3292500.3330680*
+
+    We adopt https://github.com/microsoft/anomalydetector
+
