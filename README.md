@@ -1,4 +1,4 @@
-# Maintenance Techniques for Anomaly Detection Models for AIOps Data
+# How to Retrain? Techniques for Anomaly Detection Models for AIOps Data
 
 This repo includes signal reconstruction models and retraining twchniques for univariate time series data.
 Our work attempts to investigate the most applicable maintanance approach for various kinds of signal reconstruction models on online streaming data.
