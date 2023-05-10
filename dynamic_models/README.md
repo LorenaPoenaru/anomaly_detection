@@ -11,6 +11,12 @@ LSTM-AE does not require parameter changes when running on Yahoo or NAB. SR-CNN 
 
 When running SR-CNN, create a folder called 'snapshot' where the script will save the model.
 
+The original SR-CNN implementation was changed to accomodate our experiments as followed:
+- changed function _get_path_;
+- changed data reading from predefined functions to pandas;
+- results collected in a dataframe,
+- merged the generation, training and evaluation into one script.
+
 
 ## data_preparation_srcnn
 
