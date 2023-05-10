@@ -14,7 +14,7 @@ When running SR-CNN, create a folder called 'snapshot' where the script will sav
 The original SR-CNN implementation was changed to accomodate our experiments as followed:
 - changed function _get_path_;
 - changed data reading from predefined functions to pandas;
-- results collected in a dataframe,
+- results collected in a dataframe;
 - merged the generation, training and evaluation into one script.
 
 
