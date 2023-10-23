@@ -1,5 +1,5 @@
 cython==0.29.2
-numpy==1.18.0
+numpy==1.18.1
 pandas==0.25.3
 torch==2.1.0
 torchvision==0.16.0
