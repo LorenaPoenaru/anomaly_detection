@@ -30,7 +30,9 @@ Please, send a request through the official website to obtain Yahoo data
 ### Drift detectors
 
 * `FEDD` 
-We use the FEDD drift detectors from the following repository: https://github.com/GustavoHFMO/IDPSO-ELM-S/blob/008477e80c37ed5d0ff7f2d75394d85542b046c0/detectores/FEDD.py
+We use the FEDD drift detectors initially introduced in: https://github.com/GustavoHFMO/IDPSO-ELM-S/blob/008477e80c37ed5d0ff7f2d75394d85542b046c0/detectores/FEDD.py
+We provide our own implementation under `utils/drift_detection/FEDD.py`
+You could find example usage in `utils/drift_detection/FEDD_on_TS.ipynb`
 
 ### Models
  #### Static
