@@ -30,7 +30,7 @@ Please, send a request through the official website to obtain Yahoo data
 ### Drift detectors
 
 * `FEDD` 
-We use own adaptation of https://github.com/GustavoHFMO/IDPSO-ELM-S/blob/008477e80c37ed5d0ff7f2d75394d85542b046c0/detectores/FEDD.py
+We use the FEDD drift detectors from the following repository: https://github.com/GustavoHFMO/IDPSO-ELM-S/blob/008477e80c37ed5d0ff7f2d75394d85542b046c0/detectores/FEDD.py
 
 ### Models
  #### Static
@@ -82,4 +82,12 @@ We use own adaptation of https://github.com/GustavoHFMO/IDPSO-ELM-S/blob/008477e
     //doi.org/10.1145/3292500.3330680*
 
     We adopt https://github.com/microsoft/anomalydetector
+
+   ### Setup specifications:
+
+  Python 3.8.8 is required to reproduce the code.
+  When running SR-CNN, you need to first install the requirements found in requirements.txt and then run the following command:
+  ```
+  python setup.py install
+  ```
 
