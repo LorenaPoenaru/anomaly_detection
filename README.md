@@ -30,9 +30,10 @@ Please, send a request through the official website to obtain Yahoo data
 ### Drift detectors
 
 * `FEDD` 
-We use the FEDD drift detectors initially introduced in: https://github.com/GustavoHFMO/IDPSO-ELM-S/blob/008477e80c37ed5d0ff7f2d75394d85542b046c0/detectores/FEDD.py
-We provide our own implementation under `utils/drift_detection/FEDD.py`
-You could find example usage in `utils/drift_detection/FEDD_on_TS.ipynb`
+We use the FEDD drift detectors initially introduced in:  *R. C. Cavalcante, L. L. Minku and A. L. I. Oliveira, "FEDD: Feature Extraction for Explicit Concept Drift Detection in time series," 2016 International Joint Conference on Neural Networks (IJCNN), Vancouver, BC, Canada, 2016, pp. 740-747, doi: 10.1109/IJCNN.2016.7727274.*
+We extracted the FEDD implementation and translated the code and comments into English from the following replication package: https://github.com/GustavoHFMO/IDPSO-ELM-S/blob/008477e80c37ed5d0ff7f2d75394d85542b046c0/detectores/FEDD.py
+This implementation is available in `utils/drift_detection/FEDD.py`
+You can find example of how to use FEDD on time series in `utils/drift_detection/FEDD_on_TS.ipynb`
 
 ### Models
  #### Static
